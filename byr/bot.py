@@ -2,7 +2,9 @@ import contextlib
 import logging
 import os
 import re
+import sys
 import time
+import signal
 from contextlib import ContextDecorator
 from urllib.parse import urljoin
 
@@ -19,6 +21,10 @@ def format_size(bytes_size):
         return f"{gb / 1000:.2f}TB"
     return f"{gb:.2f}GB"
 
+# noinspection PyUnusedLocal
+def _handle_interrupt(signum, frame):
+    sys.exit(0)
+
 class Bot(ContextDecorator):
     def __init__(self, login: LoginTool, torrent_client):
         super(Bot, self).__init__()
@@ -29,7 +35,6 @@ class Bot(ContextDecorator):
         self.torrent_url = self._get_url('torrents.php')
         self.old_torrent = list()
 
-        # all size in Byte
         self.max_torrent_total_size = int(os.getenv("MAX_TORRENTS_SIZE", "1024"))
         if self.max_torrent_total_size is None or self.max_torrent_total_size < 0:
             self.max_torrent_total_size = 0
@@ -65,9 +70,12 @@ class Bot(ContextDecorator):
 
     def __enter__(self):
         logger.info("BYRBT bot started.")
+        signal.signal(signal.SIGINT, _handle_interrupt)
+        signal.signal(signal.SIGTERM, _handle_interrupt)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.login_tool.close()
         logger.info("BYRBT bot exited.")
 
     def _get_url(self, url_path):
@@ -95,11 +103,11 @@ class Bot(ContextDecorator):
                 logger.debug("User info: []")
                 return
             user_info_text = user_info_text[index_s:index_e]
-            user_info_text = re.sub("[\xa0\n]", ' ', user_info_text)
-            user_info_text = re.sub("\[[^\[]*]", '', user_info_text).replace('：', ':')
-            user_info_text = re.sub(" *: *", ':', user_info_text).strip()
-            user_info_text = re.sub("\s+", ' ', user_info_text)
-            user_info_text = "用户名:" + user_name + " " + user_info_text
+            user_info_text = re.sub(r"[\xa0\n]+", ' ', user_info_text)
+            user_info_text = re.sub(r'\[[^]]*]', '', user_info_text)
+            user_info_text = re.sub(r'\s*[:：]\s*', ':', user_info_text)
+            user_info_text = re.sub(r'\s+', ' ', user_info_text).strip()
+            user_info_text = f"用户名:{user_name} {user_info_text}"
             logger.debug(f"User info: {user_info_text}")
 
         except Exception as e:
@@ -188,7 +196,7 @@ class Bot(ContextDecorator):
 
         return torrent_infos
 
-    def get_ok_torrent(self, torrent_infos):
+    def find_appropriate_torrents(self, torrent_infos):
         # 获取可用的种子的策略
         ok_infos = list()
         if len(torrent_infos) >= 20:
@@ -251,7 +259,7 @@ class Bot(ContextDecorator):
                     self.login_tool.clear_browser()
                 else:
                     self.page.scroll.to_bottom()
-                    if self.page.wait.doc_loaded(timeout=15) is False:
+                    if self.page.wait.doc_loaded(timeout=10) is False:
                         logger.error('Get torrents timeout!')
                         self.login_tool.clear_browser()
                     else:
@@ -292,12 +300,12 @@ class Bot(ContextDecorator):
             for i, info in enumerate(torrent_infos):
                 logger.debug('%d : %s %s %s', i+1, info['seed_id'], info['file_size'], info['title'])
 
-            ok_torrent = self.get_ok_torrent(torrent_infos)
+            appropriate_torrents = self.find_appropriate_torrents(torrent_infos)
             logger.debug('Available torrent list:')
-            for i, info in enumerate(ok_torrent):
+            for i, info in enumerate(appropriate_torrents):
                 logger.debug('%d : %s %s %s', i+1, info['seed_id'], info['file_size'], info['title'])
 
-            for torrent in ok_torrent:
+            for torrent in appropriate_torrents:
                 if not self.download(torrent['seed_id']):
                     logger.error('%s download failed', torrent['title'])
                     continue
@@ -341,15 +349,13 @@ class Bot(ContextDecorator):
 
                 # 下载失败处理
                 logger.warning(f"Download attempt {i + 1} failed, retrying ...")
-                self.login_tool.clear_browser()
-                self.page = self.login_tool.login()
+                self.page = self.login_tool.retry_login()
                 time.sleep(1)
 
             except Exception as e:
                 logger.warning(f"Failed to download torrent: {e}")
                 logger.info("Retrying login ...")
-                self.login_tool.clear_browser()
-                self.page = self.login_tool.login()
+                self.page = self.login_tool.retry_login()
                 time.sleep(1)
 
         # 检查下载是否成功
