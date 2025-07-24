@@ -19,7 +19,7 @@ WORKDIR /app
 COPY pyproject.toml ./
 
 # 安装依赖
-RUN uv sync
+RUN uv pip install --system --compile -e .
 
 # 复制业务代码
 COPY . .

@@ -1,0 +1,27 @@
+# 系统/IDE 自动生成文件
+.DS_Store
+.idea
+
+# Python 编译/缓存文件
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info
+
+# 虚拟环境
+.venv
+
+# 构建/发布产物
+build
+dist
+*.tar
+*.tar.gz
+
+# 数据文件
+data
+
+# 其他
+.dockerignore
+.git
