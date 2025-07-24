@@ -1,0 +1,12 @@
+[project]
+name = "byr"
+version = "0.1.0"
+description = "A bot for BYRBT website"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "drissionpage>=4.1.0.18",
+    "python-dotenv>=1.1.1",
+    "qbittorrent-api>=2025.7.0",
+    "the-new-hotness>=1.3.0",
+]
