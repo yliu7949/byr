@@ -3,7 +3,10 @@
 
 .venv/
 **/__pycache__/
+*.egg-info
 uv.lock
+
+build/
 
 .env
 **/data/
