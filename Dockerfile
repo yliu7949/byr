@@ -1,9 +1,10 @@
 # ---- 构建阶段 ----
+FROM python:3.11-slim AS builder
+
+# 镜像元数据
 LABEL org.opencontainers.image.source=https://github.com/yliu7949/byr
 LABEL org.opencontainers.image.description="Automates latest free-torrent discovery from byr.pt and hands them off to qBittorrent."
 LABEL org.opencontainers.image.licenses=GPL-3.0
-
-FROM python:3.11-slim AS builder
 
 # 安装基本工具
 RUN apt-get update \
