@@ -43,7 +43,7 @@ Byrrot 是一款为[北邮人 BT 站 (BYRBT)](https://byr.pt/) 设计的自动�
 1. 硬件设备：一台长期运行用于做种的设备（个人电脑、云服务器、NAS、树莓派皆可）。
 2. 运行环境：Python 3.11+ 环境或 Docker 容器化环境。
 3. 网络环境：支持 IPv6，能稳定访问 **[byr.pt](https://byr.pt/)**（北邮人 PT 站）。
-4. qBittorrent 客户端：已在选项中**启用 Web 用户界面（远程控制）**的 qBittorrent 客户端（当前推荐使用 v5.1.0 版本）。
+4. qBittorrent 客户端：已在选项中**启用 Web 用户界面（远程控制）** 的 qBittorrent 客户端（当前推荐使用 v5.1.0 版本）。
 
 ### 使用方式一：在 Python 环境下直接运行
 
