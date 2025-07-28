@@ -1,7 +1,7 @@
 [project]
 name = "byr"
 version = "0.1.0"
-description = "A bot for BYRBT website"
+description = "Automates latest free-torrent discovery from byr.pt and hands them off to qBittorrent."
 requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.13.4",

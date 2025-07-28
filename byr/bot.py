@@ -230,7 +230,7 @@ class Bot(ContextDecorator):
         return ok_infos
 
     def start(self):
-        scan_interval_in_sec = 30
+        scan_interval_in_sec = 45
         check_disk_space_interval_in_sec = 3600
         last_check_disk_space_time = -1
         while True:
