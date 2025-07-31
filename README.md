@@ -1,10 +1,10 @@
-<p style="text-align: center;">
+<p align="center">
   <img width="190" src="https://raw.githubusercontent.com/yliu7949/byr/master/assets/logo.svg" alt="Byrrot logo">
 </p>
 
 
 # Byrrot
-[![byrbt](https://img.shields.io/static/v1?label=Byrrot&message=0.1.0&color=green)](https://github.com/yliu7949/byr)
+[![byrbt](https://img.shields.io/static/v1?label=Byrrot&message=0.1.1&color=green)](https://github.com/yliu7949/byr)
 [![GitHub License](https://img.shields.io/github/license/yliu7949/byr)](https://github.com/yliu7949/byr/blob/master/LICENSE)
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fyliu7949%2Fbyr%2Frefs%2Fheads%2Fmaster%2Fpyproject.toml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/yliu7949/byr)](https://hub.docker.com/r/yliu7949/byr)

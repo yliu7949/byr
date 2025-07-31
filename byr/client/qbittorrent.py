@@ -102,7 +102,7 @@ class QBittorrent:
                     if tagged:
                         new_torrent = tagged[0]
 
-            # 清理临时标签
+            # 移除种子上的临时标签
             if new_torrent and unique_tag in new_torrent.tags:
                 try:
                     self.client.torrents_remove_tags(
@@ -111,6 +111,15 @@ class QBittorrent:
                     )
                 except Exception as e:
                     logger.warning(f"Failed to remove temp tag: {e}")
+
+            # 删除创建的临时标签
+            try:
+                all_tags = self.client.torrents_tags()
+                temp_tags = [tag for tag in all_tags if tag.startswith('temp_')]
+                if temp_tags:
+                    self.client.torrents_delete_tags(tags=temp_tags)
+            except Exception as e:
+                logger.warning(f"Failed to delete temp tags: {e}")
 
             return new_torrent
 
