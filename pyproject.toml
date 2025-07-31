@@ -9,3 +9,15 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "qbittorrent-api>=2025.7.0",
 ]
+
+[tool.uv]
+upgrade = true
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.7",
+]

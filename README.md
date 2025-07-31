@@ -1,5 +1,5 @@
-<p align="center">
-  <img width="190" src="https://raw.githubusercontent.com/yliu7949/byr/master/assets/logo.svg" style="text-align: center;" alt="Byrrot logo">
+<p style="text-align: center;">
+  <img width="190" src="https://raw.githubusercontent.com/yliu7949/byr/master/assets/logo.svg" alt="Byrrot logo">
 </p>
 
 
@@ -29,12 +29,12 @@ Byrrot 是一款为[北邮人 BT 站 (BYRBT)](https://byr.pt/) 设计的自动�
 
 ## 特性
 
-| 核心功能 | 说明 |
-|:----:|:----:|
-| **自动发现免费种子** | 定时监控 byr.pt 的最新免费种子资源，自动下载 `.torrent` 文件 |
-| **与 qBittorrent 交互** | 通过 qBittorrent Web API 实现种子自动添加及存储空间智能清理功能 |
-| **灵活配置方式** | 支持 `.env` 文件与环境变量双重配置机制，保护敏感信息 |
-| **容器化部署** | 提供预构建的 Docker 镜像，支持快速部署和跨平台一致运行 |
+|         核心功能          |                     说明                      |
+|:---------------------:|:-------------------------------------------:|
+|     **自动发现免费种子**      |  定时监控 byr.pt 的最新免费种子资源，自动下载 `.torrent` 文件   |
+| **与 qBittorrent 交互**  | 通过 qBittorrent Web API 实现种子自动添加及存储空间智能清理功能  |
+|      **灵活配置方式**       |       支持 `.env` 文件与环境变量双重配置机制，保护敏感信息        |
+|       **容器化部署**       |       提供预构建的 Docker 镜像，支持快速部署和跨平台一致运行       |
 
 ## 快速开始
 

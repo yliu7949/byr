@@ -24,7 +24,7 @@ class LoginTool:
         self.close()
 
     def close(self):
-        if not self.browser is None:
+        if self.browser is not None:
             self.browser.quit()
             self.browser = None
         self.tab = None

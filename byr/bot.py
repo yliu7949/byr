@@ -318,7 +318,7 @@ class Bot(ContextDecorator):
             logger.info(f"Torrent {torrent_id} already processed, skipping download")
             return True
 
-        download_url = 'download.php?id={}'.format(torrent_id)
+        download_url = f'download.php?id={torrent_id}'
         download_url = self._get_url(download_url)
         torrent_content = None
 
@@ -378,19 +378,16 @@ class Bot(ContextDecorator):
             if result is None:
                 logger.error('Space check failed unexpectedly')
             else:
-                logger.error('Insufficient space: Name: {}, Size: {:.2f} GB'.format(
-                    new_torrent.name, new_torrent_size / 1_000_000_000))
+                logger.error(f'Insufficient space: Name: {new_torrent.name}, Size: {new_torrent_size / 1_000_000_000:.2f} GB')
             return False
 
         # 启动种子
         if self.torrent_client.start_torrent(new_torrent.hash):
-            logger.info('Added torrent: [{}][{:.3f} GB][{}]'.format(
-                new_torrent.comment, new_torrent_size / 1_000_000_000, new_torrent.name))
+            logger.info(f'Added torrent: [{new_torrent.comment}][{new_torrent_size / 1_000_000_000:.3f} GB][{new_torrent.name}]')
             self.old_torrent.append(torrent_id)  # 记录已处理理种子
             return True
         else:
-            logger.error('Failed to start torrent: {}, Size: {:.2f} GB'.format(
-                new_torrent.name, new_torrent_size / 1_000_000_000))
+            logger.error(f'Failed to start torrent: {new_torrent.name}, Size: {new_torrent_size / 1_000_000_000:.2f} GB')
             self.torrent_client.remove(new_torrent.hash, delete_data=True)
             return False
 
