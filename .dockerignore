@@ -25,3 +25,5 @@ data
 # 其他
 .dockerignore
 .git
+.github
+assets
