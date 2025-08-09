@@ -4,7 +4,7 @@
 
 
 # Byrrot
-[![byrbt](https://img.shields.io/static/v1?label=Byrrot&message=0.1.1&color=green)](https://github.com/yliu7949/byr)
+[![byrbt](https://img.shields.io/static/v1?label=Byrrot&message=0.1.2&color=green)](https://github.com/yliu7949/byr)
 [![GitHub License](https://img.shields.io/github/license/yliu7949/byr)](https://github.com/yliu7949/byr/blob/master/LICENSE)
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fyliu7949%2Fbyr%2Frefs%2Fheads%2Fmaster%2Fpyproject.toml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/yliu7949/byr)](https://hub.docker.com/r/yliu7949/byr)
@@ -112,6 +112,9 @@ cp .env.example .env
 # 拉取最新容器镜像
 docker pull yliu7949/byr:latest
 
+# 创建数据文件夹
+mkdir -p ./data
+
 # 启动容器
 sudo docker run -d \
   --name byr \
@@ -120,12 +123,13 @@ sudo docker run -d \
   --restart unless-stopped \
   -e TZ=Asia/Shanghai \
   -v $(pwd)/.env:/app/.env \
+  -v $(pwd)/.data:/app/data \
   yliu7949/byr:latest
 ~~~
 
 参数说明：
 
-- `-v`：指定 `.env` 配置文件的完整路径
+- `-v`：指定 `.env` 配置文件和 `data` 文件夹的完整路径
 
 如果想要实时查看容器的运行日志，可以使用以下命令：
 

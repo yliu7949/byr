@@ -1,6 +1,6 @@
 [project]
 name = "byr"
-version = "0.1.1"
+version = "0.1.2"
 description = "Automates latest free-torrent discovery from byr.pt and hands them off to qBittorrent."
 requires-python = ">=3.11"
 dependencies = [
@@ -19,5 +19,5 @@ default = true
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.7",
+    "ruff>=0.12.8",
 ]

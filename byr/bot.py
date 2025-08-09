@@ -75,6 +75,7 @@ class Bot(ContextDecorator):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.login_tool.logout()
         self.login_tool.close()
         logger.info("BYRBT bot exited.")
 
@@ -268,10 +269,11 @@ class Bot(ContextDecorator):
                 logger.error('%s', repr(e))
                 self.login_tool.logout()
                 self.login_tool.clear_browser()
+                return
 
             if not flag:
-                self.login_tool.close()
-                break
+                time.sleep(2)
+                continue
 
             try:
                 user_info_block = torrents_soup.select_one('#info_block').select_one('.navbar-user-data')
