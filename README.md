@@ -113,7 +113,7 @@ cp .env.example .env
 docker pull yliu7949/byr:latest
 
 # 创建数据文件夹
-mkdir -p ./data
+mkdir -p .data
 
 # 启动容器
 sudo docker run -d \
