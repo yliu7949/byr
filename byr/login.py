@@ -19,6 +19,7 @@ class LoginTool:
         self.chromium_options = self.init_chromium_options()
         self.browser = Chromium(addr_or_opts=self.chromium_options)
         self.tab = self.browser.latest_tab
+        self.logout_url = ''
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
@@ -34,7 +35,7 @@ class LoginTool:
             user_data_path=self.chromium_user_data_path,
             cache_path=self.chromium_cache_path,
         ).no_imgs(True).mute(True).auto_port(True)
-        .set_user_agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Heicore/138.0.0.0 Safari/537.36'))
+        .set_user_agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'))
 
         system = platform.system()
         if system == 'Windows' or system == 'Darwin':
@@ -80,6 +81,7 @@ class LoginTool:
             logger.error('Failed to access the website: %s', self.base_url)
             return None
         if self.tab.url.endswith('login'):
+            logger.info('Login required.')
             self.tab.ele('@autocomplete=username').input(os.getenv("BYRBT_USERNAME"))
             self.tab.ele('@autocomplete=current-password').input(os.getenv("BYRBT_PASSWORD"))
             self.tab.ele('@text()=保持登录').click()
@@ -93,12 +95,21 @@ class LoginTool:
         if self.tab.url != self.base_url and '最近消息' not in self.tab.html:
             logger.error('Login failed!')
             return None
+
+        self.logout_url = self.base_url + self.tab.ele('退出').attrs['href']
         logger.info('Login success!')
         return self.tab
 
     def retry_login(self):
         self.clear_browser()
         return self.login()
+
+    def logout(self) -> bool:
+        if self.logout_url != '' and self.tab.get(self.logout_url, retry=5):
+            logger.info('Logout success!')
+            self.logout_url = ''
+            return True
+        return False
 
 if __name__ == '__main__':
     from dotenv import load_dotenv

@@ -250,27 +250,27 @@ class Bot(ContextDecorator):
                     self.login_tool.clear_browser()
                     break
 
-            logger.debug('Scan torrent list ...')
             flag = False
             torrents_soup = None
+            logger.debug('Scan torrent list ...')
+
             try:
                 if self.page.get(self.torrent_url, retry=5) is False:
                     logger.error('Failed to access the website! URL: %s', self.torrent_url)
-                    self.login_tool.clear_browser()
                 else:
                     self.page.scroll.to_bottom()
                     if self.page.wait.doc_loaded(timeout=10) is False:
                         logger.error('Get torrents timeout!')
-                        self.login_tool.clear_browser()
                     else:
                         torrents_soup = BeautifulSoup(self.page.html, 'html.parser')
                         flag = True
             except Exception as e:
                 logger.error('%s', repr(e))
+                self.login_tool.logout()
                 self.login_tool.clear_browser()
 
             if not flag:
-                logger.error('Login failed!')
+                self.login_tool.close()
                 break
 
             try:
