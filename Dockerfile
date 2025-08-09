@@ -23,8 +23,9 @@ WORKDIR /app
 # 复制依赖定义文件
 COPY pyproject.toml ./
 
-# 安装依赖
-RUN uv pip install --system --compile -e .
+# 使用官方源安装依赖
+RUN uv pip install --system --compile -e . \
+    --index-url https://pypi.org/simple
 
 # 复制业务代码
 COPY . .
