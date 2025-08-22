@@ -77,6 +77,9 @@ QBITTORRENT_DOWNLOAD_PATH="/downloads"
 
 # 做种文件最大存储容量（单位：GB）
 MAX_TORRENTS_SIZE=1024
+# 浏览器代理配置，格式为：protocol://ip:port（如 "http://192.168.1.1:8080"）。留空表示不启用代理
+# 暂不支持包含用户名和密码的代理
+BROWSER_PROXY=
 ~~~
 
 安装 Python 依赖：

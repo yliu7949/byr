@@ -16,6 +16,7 @@ class LoginTool:
         self.base_url = 'https://byr.pt/'
         self.chromium_user_data_path = r'./data/cache/drission_page'
         self.chromium_cache_path = r'./data/cache/drission_page_cache'
+        self.chromium_proxy = os.getenv("BROWSER_PROXY")
         self.chromium_options = self.init_chromium_options()
         self.browser = Chromium(addr_or_opts=self.chromium_options)
         self.tab = self.browser.latest_tab
@@ -36,6 +37,9 @@ class LoginTool:
             cache_path=self.chromium_cache_path,
         ).no_imgs(True).mute(True).auto_port(True)
         .set_user_agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'))
+
+        if self.chromium_proxy is not None:
+            chromium_options.set_proxy(self.chromium_proxy)
 
         system = platform.system()
         if system == 'Windows' or system == 'Darwin':
