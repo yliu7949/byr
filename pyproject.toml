@@ -1,11 +1,11 @@
 [project]
 name = "byr"
-version = "0.1.2"
+version = "0.1.3"
 description = "Automates latest free-torrent discovery from byr.pt and hands them off to qBittorrent."
 requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.13.4",
-    "drissionpage>=4.1.0.18",
+    "drissionpage>=4.1.1.2",
     "python-dotenv>=1.1.1",
     "qbittorrent-api>=2025.7.0",
 ]
@@ -19,5 +19,5 @@ default = true
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.8",
+    "ruff>=0.12.10",
 ]
