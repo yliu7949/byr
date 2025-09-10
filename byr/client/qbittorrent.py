@@ -11,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 class QBittorrent:
     def __init__(self):
+        self.max_torrent_total_size = int(os.getenv("MAX_TORRENTS_SIZE"))
+        if self.max_torrent_total_size is None or self.max_torrent_total_size <= 0:
+            self.max_torrent_total_size = -1
+        self.max_torrent_total_size = self.max_torrent_total_size * 1024 * 1024 * 1024
+
         self.host = os.getenv('QBITTORRENT_HOST')
         self.username = os.getenv('QBITTORRENT_USERNAME')
         self.password = os.getenv('QBITTORRENT_PASSWORD')
@@ -45,9 +50,16 @@ class QBittorrent:
             return None
 
     def get_free_space(self):
-        """获取下载目录剩余空间"""
+        """获取下载目录可用剩余空间"""
         try:
-            return self.client.sync.maindata().server_state.free_space_on_disk
+            free_disk_space = self.client.sync.maindata().server_state.free_space_on_disk
+            completed_torrents = self.client.torrents_info(status_filter='completed')
+            total_selected_bytes = sum(t.size for t in completed_torrents)
+            if self.max_torrent_total_size == -1:
+                logger.warning("MAX_TORRENTS_SIZE is invalid")
+                return free_disk_space
+            else:
+                return min(free_disk_space, self.max_torrent_total_size - total_selected_bytes)
         except Exception as e:
             logger.error(f"Get free space failed: {e}")
             return None

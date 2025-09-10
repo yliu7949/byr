@@ -35,11 +35,6 @@ class Bot(ContextDecorator):
         self.torrent_url = self._get_url('torrents.php')
         self.old_torrent = list()
 
-        self.max_torrent_total_size = int(os.getenv("MAX_TORRENTS_SIZE", "1024"))
-        if self.max_torrent_total_size is None or self.max_torrent_total_size < 0:
-            self.max_torrent_total_size = 0
-        self.max_torrent_total_size = self.max_torrent_total_size * 1024 * 1024 * 1024
-
         self._tag_map = {
             # highlight & tag
             'free': '免费',
@@ -232,16 +227,16 @@ class Bot(ContextDecorator):
 
     def start(self):
         scan_interval_in_sec = 45
-        check_disk_space_interval_in_sec = 3600
-        last_check_disk_space_time = -1
+        check_free_space_interval_in_sec = 3600
+        last_check_free_space_time = -1
         while True:
             now_time = int(time.time())
-            if now_time - last_check_disk_space_time > check_disk_space_interval_in_sec:
-                logger.info('Check disk space ...')
-                if self.check_disk_space():
-                    last_check_disk_space_time = now_time
+            if now_time - last_check_free_space_time > check_free_space_interval_in_sec:
+                logger.info('Check free space ...')
+                if self.check_free_space():
+                    last_check_free_space_time = now_time
                 else:
-                    logger.error('Check disk space failed!')
+                    logger.error('Check free space failed!')
                     time.sleep(scan_interval_in_sec)
                     continue
 
@@ -386,18 +381,18 @@ class Bot(ContextDecorator):
         # 启动种子
         if self.torrent_client.start_torrent(new_torrent.hash):
             logger.info(f'Added torrent: [{new_torrent.comment}][{new_torrent_size / 1_000_000_000:.3f} GB][{new_torrent.name}]')
-            self.old_torrent.append(torrent_id)  # 记录已处理理种子
+            self.old_torrent.append(torrent_id)  # 记录已处理的种子
             return True
         else:
             logger.error(f'Failed to start torrent: {new_torrent.name}, Size: {new_torrent_size / 1_000_000_000:.2f} GB')
             self.torrent_client.remove(new_torrent.hash, delete_data=True)
             return False
 
-    def check_disk_space(self):
+    def check_free_space(self):
         # 定义常量
         min_space_required = 5_000_000_000  # 5GB
 
-        # 获取当前磁盘空间
+        # 获取当前可用空间
         free_space = self.torrent_client.get_free_space()
         if free_space is None:
             logger.error('Failed to retrieve available disk space.')
@@ -410,10 +405,7 @@ class Bot(ContextDecorator):
         if free_space > min_space_required:
             return True
 
-        # 空间不足处理流程
-        logger.warning('Low disk space (%s < 5GB), clearing torrents ...', format_size(free_space))
-
-        # 删除早期添加的种子
+        # 开始空间不足处理流程，删除早期添加的种子
         self.check_remove()
 
         # 最终空间验证
@@ -427,10 +419,10 @@ class Bot(ContextDecorator):
         min_space_required = min_free_space_gb * (1024 ** 3)  # 转换为字节
         upload_rate_threshold = 200_000  # 200KB/s
 
-        # 获取当前磁盘空间
+        # 获取当前可用空间
         free_space = self.torrent_client.get_free_space()
         if free_space is None:
-            logger.error("Failed to retrieve available disk space")
+            logger.error("Failed to retrieve available space")
             return False
 
         # 记录当前空间状态
@@ -441,7 +433,7 @@ class Bot(ContextDecorator):
             return True
 
         # 空间不足处理流程
-        logger.warning('Low disk space (%s < %sGB), clearing torrents ...',
+        logger.warning('Low free space (%s < %sGB), clearing torrents ...',
                        format_size(free_space), min_free_space_gb)
 
         # 获取种子列表
@@ -484,7 +476,7 @@ class Bot(ContextDecorator):
         success = final_space >= min_space_required
 
         if success:
-            logger.info('Successfully freed space. Final free space: %s', format_size(final_space))
+            logger.debug('Successfully freed space. Final free space: %s', format_size(final_space))
         else:
             logger.warning('Still insufficient space after removal. Final free space: %s',
                            format_size(final_space))
